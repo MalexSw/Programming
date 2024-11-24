@@ -1,6 +1,6 @@
 # Report 11
 
-## Structures
+## Structures.
 
 #### In this laboratory work I created some structures and functions, which work with these structures
 
