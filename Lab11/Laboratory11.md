@@ -4,9 +4,7 @@
 
 #### In this laboratory work I created some structures and functions, which work with these structures
 
-#### In this programm I created a programm for Online Store Management - I have store, product and customer structures and functions, which can add new products, place some orders and read orders for customers
-
-#### Here are my structures: 
+#### In this programm I created a programm for Online Store Management - I have store, product and customer structures and functions, which can add new products, place some orders and read orders for customers. To solve the problem first of all I have creted structeres, mentioned in the task:
 
 >typedef struct {       
     char name[MAX_NAME_LENGTH];     
@@ -27,7 +25,11 @@
     int customerAmount;     
 } store_t;      
 
-#### I also have some checks if such prodect exist and if such customer exist.
+#### Then I added fields, which are obligated for programm normal work - max amount of products, orders, customers and max name length. 
+
+#### After this I created functions - to add poduct to the store, to place order and to list orders with customers. Also I have a function to initialize store as an object.
+
+#### Problems. My main problem was placeOrder function, because it required a lot of different operations depending from conditions. Espeially problematic for me was creating a new customer operations, because for this I needed to create a new object of customer structure and add order coubnt to it. But I have solved it.
 
 #### So here is my output
 
