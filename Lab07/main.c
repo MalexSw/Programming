@@ -1,15 +1,31 @@
 #include <stdio.h>
 
-int pyramidDrawing(int n) {
-    for (int amOfSymbols = 0; amOfSymbols < n; amOfSymbols++ ) {
-   for(int i = 0; i < n - amOfSymbols - 1; i++) {
-    printf(" ");
-   }
-  for(int m = 0; m < amOfSymbols * 2 + 1; m++) {
-    printf("+");
-  }
-    printf("\n");
+void printSpaces(int count) {
+    if (count <= 0) {
+        return;
     }
+    printf(" ");
+    printSpaces(count - 1);
+}
+
+
+void printSymbols(int count) {
+    if (count <= 0) {
+        return;
+    }
+    printf("+");
+    printSymbols(count - 1);
+}
+
+
+void drawPyramid(int n, int current) {
+    if (current >= n) {
+        return;
+    }
+    printSpaces(n - current - 1);      
+    printSymbols(current * 2 + 1);
+    printf("\n");
+    drawPyramid(n, current + 1);   
 }
 
 int determinationForPrime(long n, long divisor) {
@@ -30,7 +46,7 @@ int main() {
     }
     printf("\n\n\n");
     printf("----------------------------------------------------- \n\n\n");
-    pyramidDrawing(n);
+    drawPyramid(n, 0);
 
     return 0;
 }
