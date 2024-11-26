@@ -2,245 +2,171 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Function to fill an array with random numbers within a given range
+void fillArrayWithRandomNumbers(int *array, int size, int minValue, int maxValue) {
+    printf("Array:  \n");
+    for (int i = 0; i < size; i++) {
+        array[i] = (rand() % (maxValue - minValue + 1)) + minValue;
+        printf("%d  ", array[i]);
+    }
+    printf("\n---------------------------------- \n");
+}
 
-
-void calcOfNegativeElementsAverage(int numberOfElements) {
-    int array[numberOfElements];
-    int minValue = -10;
-    int maxValue = 15;
+// Function to calculate the average of negative numbers in an array
+void calcOfNegativeElementsAverage(int *array, int size) {
+    printf("\n");
     int sumOfNegNumbers = 0;
     int amOfNegativeNum = 0;
 
-    srand(time(0));
-
-    for(int i = 0; i < numberOfElements; i++) {
-        array[i] = (rand() % (maxValue - minValue + 1)) + minValue;
-    }
-
-     for(int i = 0; i < numberOfElements; i++) {
+    for (int i = 0; i < size; i++) {
         if (array[i] < 0) {
             sumOfNegNumbers += array[i];
             amOfNegativeNum++;
         }
     }
 
-    for(int i = 0; i < numberOfElements; i++) {
+    // Print the array
+    for (int i = 0; i < size; i++) {
         printf("%d ", array[i]);
-    }  
+    }
     printf("\n");
+
+    // Calculate and print the average
     if (amOfNegativeNum != 0) {
         float averageValue = (float)sumOfNegNumbers / amOfNegativeNum;
         printf("Average of negative elements in this array is %0.2f \n", averageValue);
-        printf("---------------------------------- \n");
     } else {
-       printf("In this array there is no negative values \n"); 
-       printf("---------------------------------- \n");
+        printf("In this array, there are no negative values \n");
     }
-
+    printf("\n---------------------------------- \n");
 }
 
+// Function to find the second greatest element in an array
+void secondGreatest(int *array, int size) {
+    printf("\n");
+    int theGreatest = -1000; // Placeholder for the greatest value
+    int secondGreatest = -1000; // Placeholder for the second greatest value
 
-
-
-
-void secondGreatest(int numberOfElements) {
-    int array[numberOfElements];
-    int minValue = -10;
-    int maxValue = 15;
-    int theGreatest = minValue;
-    int secondGreatest = minValue;
-
-    srand(time(0));
-
-    for(int i = 0; i < numberOfElements; i++) {
-        array[i] = (rand() % (maxValue - minValue + 1)) + minValue;
+    if (size < 2) {
+        printf("Array contains fewer than two elements.\n");
+        return;
     }
 
-    if (numberOfElements < 2) { 
-        printf("Array comntain only one element %d \n", array[1]);
-    } else {
-    theGreatest = array[1];
-
-    for(int i = 0; i < numberOfElements; i++) {
+    // Find the greatest and second greatest elements
+    for (int i = 0; i < size; i++) {
         if (array[i] > theGreatest) {
             secondGreatest = theGreatest;
             theGreatest = array[i];
-        } else if ((array[i] < theGreatest) && ((array[i] > secondGreatest))) {
+        } else if (array[i] > secondGreatest && array[i] != theGreatest) {
             secondGreatest = array[i];
         }
     }
-    for(int i = 0; i < numberOfElements; i++) {
+
+    // Print the array
+    for (int i = 0; i < size; i++) {
         printf("%d ", array[i]);
-    }  
+    }
     printf("\n");
+
+    // Print the second greatest element
     printf("Second greatest element is %d \n", secondGreatest);
-    printf("---------------------------------- \n");
-    }
-
+    printf("\n---------------------------------- \n");
 }
 
-
-
-
-
-
-void arrayChanging(int numberOfElements) {
-    int array[numberOfElements];
-    int minValue = -10;
-    int maxValue = 15;
-    char inputOperation = 'a'; // a fo addition, s for subtraction, m for multiplying and d for dividing
-    int valForModification = 3;
-
-     for(int i = 0; i < numberOfElements; i++) {
-        array[i] = (rand() % (maxValue - minValue + 1)) + minValue;
-    }
-
-    printf("Old array \n");
-    for(int i = 0; i < numberOfElements; i++) {
+// Function to modify an array based on a given operation
+void arrayChanging(int *array, int size, char operation, int value) {
+    printf("\n");
+    printf("Old array:\n");
+    for (int i = 0; i < size; i++) {
         printf("%d ", array[i]);
-    } 
-
-    switch (inputOperation)
-    {
-    case 'a':
-        for(int i = 0; i < numberOfElements; i++) {
-        array[i] += valForModification;
-    }
-        break;
-
-    case 's':
-        for(int i = 0; i < numberOfElements; i++) {
-        array[i] -= valForModification;
-    }
-        break;
-
-    case 'm':
-        for(int i = 0; i < numberOfElements; i++) {
-        array[i] *= valForModification;
-    }
-        break;
-
-    case 'd':
-    if (valForModification == 0) {
-        printf("Impossible operation \n");
-        printf("---------------------------------- \n");
-        return;
-    } else {
-        for(int i = 0; i < numberOfElements; i++) {
-        array[i] /= valForModification;
-        }
-    }
-        break;
-
-    default:
-        break;
     }
 
-    printf("\n New array \n");
-    for(int i = 0; i < numberOfElements; i++) {
+    // Apply the operation to each element
+    switch (operation) {
+        case 'a': // Addition
+            for (int i = 0; i < size; i++) {
+                array[i] += value;
+            }
+            break;
+        case 's': // Subtraction
+            for (int i = 0; i < size; i++) {
+                array[i] -= value;
+            }
+            break;
+        case 'm': // Multiplication
+            for (int i = 0; i < size; i++) {
+                array[i] *= value;
+            }
+            break;
+        case 'd': // Division
+            if (value == 0) {
+                printf("\nImpossible operation (division by zero)\n");
+                return;
+            }
+            for (int i = 0; i < size; i++) {
+                array[i] /= value;
+            }
+            break;
+        default:
+            printf("\nInvalid operation\n");
+            return;
+    }
+
+    printf("\nNew array:\n");
+    for (int i = 0; i < size; i++) {
         printf("%d ", array[i]);
-    } 
-    printf("\n ---------------------------------- \n");
+    }
+    printf("\n---------------------------------- \n");
 }
 
+// Function to merge two sorted arrays
+void sortedArraysMerging(int *array1, int *array2, int size) {
+    printf("\n");
+    int mergedArray[2 * size];
 
-
-
-void sortedArraysMerging(int numberOfElements) {
-    int array1[numberOfElements];
-    int array2[numberOfElements];
-    int minValue = -10;
-    int maxValue = 15;
-    int mergedArray[2 * numberOfElements];
-
-    for(int i = 0; i < numberOfElements; i++) {
-        array1[i] = (rand() % (maxValue - minValue + 1)) + minValue;
-    }
-
-    for (int i = 0; i < numberOfElements - 1; i++) {
-        for (int j = 0; j < numberOfElements - i - 1; j++) {
+    // Sort both arrays
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
             if (array1[j] > array1[j + 1]) {
-                int change = array1[j];
+                int temp = array1[j];
                 array1[j] = array1[j + 1];
-                array1[j + 1] = change;
+                array1[j + 1] = temp;
             }
-        }
-    }
-
-    printf("\n First array \n");
-    for(int i = 0; i < numberOfElements; i++) {
-        printf("%d ", array1[i]);
-    } 
-
-    for(int i = 0; i < numberOfElements; i++) {
-        array2[i] = (rand() % (maxValue - minValue + 1)) + minValue;
-    }
-
-    for (int i = 0; i < numberOfElements - 1; i++) {
-        for (int j = 0; j < numberOfElements - i - 1; j++) {
             if (array2[j] > array2[j + 1]) {
-                int change = array2[j];
+                int temp = array2[j];
                 array2[j] = array2[j + 1];
-                array2[j + 1] = change;
+                array2[j + 1] = temp;
             }
         }
     }
 
-    printf("\n Second array \n");
-    for(int i = 0; i < numberOfElements; i++) {
-        printf("%d ", array2[i]);
-    } 
-
-    int mergedArrPointer = 0;
-    int i = 0;
-    int j = 0;
-
-    while (i < numberOfElements && j < numberOfElements) {
+    // Merge the sorted arrays
+    int i = 0, j = 0, k = 0;
+    while (i < size && j < size) {
         if (array1[i] < array2[j]) {
-            mergedArray[mergedArrPointer++] = array1[i++];
+            mergedArray[k++] = array1[i++];
         } else {
-            mergedArray[mergedArrPointer++] = array2[j++];
+            mergedArray[k++] = array2[j++];
         }
     }
 
-     while (i < numberOfElements) {
-        mergedArray[mergedArrPointer++] = array1[i++];
-    }
+    while (i < size) mergedArray[k++] = array1[i++];
+    while (j < size) mergedArray[k++] = array2[j++];
 
-    while (j < numberOfElements) {
-        mergedArray[mergedArrPointer++] = array2[j++];
-    }
-
-    printf("\n Merged array \n");
-    for(int i = 0; i < 2 * numberOfElements; i++) {
+    printf("\nMerged array:\n");
+    for (int i = 0; i < 2 * size; i++) {
         printf("%d ", mergedArray[i]);
     }
-
+    printf("\n---------------------------------- \n");
 }
 
+// Function to distribute elements of an array into even and odd arrays
+void evenAndOddNumbersDistributing(int *array, int size) {
+    printf("\n");
+    int evenArray[size], oddArray[size];
+    int evenCount = 0, oddCount = 0;
 
-
-
-
-void evenAndOddNumbersDistributing(int numberOfElements) {
-    int array[numberOfElements];
-    int evenArray[numberOfElements]; 
-    int oddArray[numberOfElements];
-    int minValue = -10;
-    int maxValue = 15;
-    int evenCount = 0;
-    int oddCount = 0;
-    
-    for(int i = 0; i < numberOfElements; i++) {
-        array[i] = (rand() % (maxValue - minValue + 1)) + minValue;
-    }
-
-    printf("\n Original array \n");
-    for(int i = 0; i < numberOfElements; i++) {
-        printf("%d ", array[i]);
-    } 
-
-    for(int i = 0; i < numberOfElements; i++) {
+    for (int i = 0; i < size; i++) {
         if (array[i] % 2 == 0) {
             evenArray[evenCount++] = array[i];
         } else {
@@ -248,24 +174,33 @@ void evenAndOddNumbersDistributing(int numberOfElements) {
         }
     }
 
-    printf("\n Even elements:\n");
+    printf("\nEven elements:\n");
     for (int i = 0; i < evenCount; i++) {
         printf("%d ", evenArray[i]);
     }
 
-    printf("\n Odd elements:\n");
+    printf("\nOdd elements:\n");
     for (int i = 0; i < oddCount; i++) {
         printf("%d ", oddArray[i]);
     }
-    printf("\n");
+    printf("\n---------------------------------- \n");
 }
 
 int main() {
     int numberOfElements = 10;
-    // calcOfNegativeElementsAverage(numberOfElements);
-    // secondGreatest(numberOfElements);
-    // arrayChanging(numberOfElements);
-    // sortedArraysMerging(numberOfElements);
-    evenAndOddNumbersDistributing(numberOfElements);
+    int array1[numberOfElements], array2[numberOfElements];
+    int minValue = -10, maxValue = 15;
+
+    srand(time(0));
+
+    // Fill arrays with random numbers
+    fillArrayWithRandomNumbers(array1, numberOfElements, minValue, maxValue);
+    fillArrayWithRandomNumbers(array2, numberOfElements, minValue, maxValue);
+
+    calcOfNegativeElementsAverage(array1, numberOfElements);
+    secondGreatest(array1, numberOfElements);
+    arrayChanging(array1, numberOfElements, 'a', 3);
+    sortedArraysMerging(array1, array2, numberOfElements);
+    evenAndOddNumbersDistributing(array1, numberOfElements);
 
 }
