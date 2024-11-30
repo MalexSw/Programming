@@ -1,0 +1,25 @@
+// DONE: Review the header files
+#include <stdio.h>
+#include <stdlib.h>
+
+// DONE: Add error handling
+int main() {
+    printf("Starting the program...\n"); // DONE: Add a debug log
+    int result = 0;
+
+    // DONE: Implement the calculation logic
+    for (int i = 0; i < 10; i++) {
+        result += i; // DONE: Optimize this loop
+    }
+
+    printf("Result: %d\n", result);
+
+    // DONE: Write unit tests for this function
+}
+
+// DONE: Add additional helper functions here
+void helperFunction() {
+    // DONE: Implement this function
+}
+
+Total Line Count: 23
