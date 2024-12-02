@@ -1,22 +1,8 @@
 #include <stdio.h>
 
-void printSpaces(int count) {
-    if (count <= 0) {
-        return;
-    }
-    printf(" ");
-    printSpaces(count - 1);
-}
+void printSpaces(int count);
 
-
-void printSymbols(int count) {
-    if (count <= 0) {
-        return;
-    }
-    printf("+");
-    printSymbols(count - 1);
-}
-
+void printSymbols(int count);
 
 void drawPyramid(int n, int current) {
     if (current >= n) {
@@ -29,10 +15,18 @@ void drawPyramid(int n, int current) {
 }
 
 int determinationForPrime(long n, long divisor) {
-    if (n <= 1) return 0;              
-    if (n <= 3) return 1;             
-    if (divisor * divisor > n) return 1; 
-    if (n % divisor == 0) return 0;     
+    if (n <= 1) {
+        return 0;
+    }              
+    if (n <= 3) {
+        return 1;
+    }              
+    if (divisor * divisor > n) {
+        return 1;
+    } 
+    if (n % divisor == 0) {
+        return 0; 
+    }    
     return determinationForPrime(n, divisor + 1); 
 }
 
@@ -49,4 +43,20 @@ int main() {
     drawPyramid(n, 0);
 
     return 0;
+}
+
+void printSpaces(int count) {
+    if (count <= 0) {
+        return;
+    }
+    printf(" ");
+    printSpaces(count - 1);
+}
+
+void printSymbols(int count) {
+    if (count <= 0) {
+        return;
+    }
+    printf("+");
+    printSymbols(count - 1);
 }
