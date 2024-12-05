@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 
 // Function to generate a random array
 void generateRandomArray(int *array, int numberOfElements, int minValue, int maxValue) {
@@ -26,10 +27,9 @@ void generateRandomMatrix(int **matrix, int rows, int columns, int minValue, int
 }
 
 // Function to calculate the sum difference between the main diagonal and second diagonal of a square matrix
-void diffBetweenDiag(int **matrix, int rows, int columns) {
+int diffBetweenDiag(int **matrix, int rows, int columns) {
     if (rows != columns) {
-        printf("It's impossible to find diagonal values for a non-square matrix.\n");
-        return;
+        return INT_MIN;
     }
 
     int mainDiagSum = 0;
@@ -42,11 +42,11 @@ void diffBetweenDiag(int **matrix, int rows, int columns) {
 
     printf("Main diagonal sum is %d \n", mainDiagSum);
     printf("Second diagonal sum is %d \n", secondDiagSum);
-    printf("Difference between diagonals is %d \n", mainDiagSum - secondDiagSum);
+    return (mainDiagSum - secondDiagSum);
 }
 
 // Function to calculate the average of negative elements in an array
-void calcOfNegativeElementsAverage(int *array, int numberOfElements) {
+float calcOfNegativeElementsAverage(int *array, int numberOfElements) {
     int sumOfNegNumbers = 0, amOfNegativeNum = 0;
 
     for (int i = 0; i < numberOfElements; i++) {
@@ -64,19 +64,16 @@ void calcOfNegativeElementsAverage(int *array, int numberOfElements) {
 
     if (amOfNegativeNum != 0) {
         float averageValue = (float)sumOfNegNumbers / amOfNegativeNum;
-        printf("Average of negative elements in this array is %.2f\n", averageValue);
+        return averageValue;
     } else {
-        printf("In this array, there are no negative values\n");
+       return 1; //average of negative elements cannot be > 0;
     }
-
-    printf("\n");
 }
 
 // Function to find the second greatest element in an array
-void secondGreatest(int *array, int numberOfElements) {
+int secondGreatest(int *array, int numberOfElements) {
     if (numberOfElements < 2) {
-        printf("Array contains only one element: %d\n", array[0]);
-        return;
+        return array[0];
     }
 
     int theGreatest = array[0], secondGreatest = array[0];
@@ -94,10 +91,7 @@ void secondGreatest(int *array, int numberOfElements) {
     for (int i = 0; i < numberOfElements; i++) {
         printf("%d ", array[i]);
     }
-    printf("\n");
-    printf("Second greatest element is %d\n", secondGreatest);
-
-    printf("\n");
+    return secondGreatest;
 }
 
 // Function to modify an array based on an operation
@@ -259,13 +253,26 @@ int main() {
     generateRandomMatrix(matrix, rows, columns, minValue, maxValue);
 
     // Function calls
-    calcOfNegativeElementsAverage(array, numberOfElements);
-    secondGreatest(array, numberOfElements);
+    int diagDifference = diffBetweenDiag(matrix, rows, columns);
+    if (diagDifference == INT_MIN) {
+        printf("No diagonal difference exist for non-square matrix \n");
+    } else {
+        printf("Difference between diagonals is %d \n", diagDifference);
+    }
+    float average = calcOfNegativeElementsAverage(array, numberOfElements);
+    if (average == 1) {
+        printf("There is no negative elements in this array");
+    } else {
+        printf("Average of negative elements in this array is %0.2f \n", average);
+    }
+    printf("\n");
+    int secondBiggest = secondGreatest(array, numberOfElements);
+    printf("\n Second greatest element is %d \n", secondBiggest);
+    printf("\n");
     arrayChanging(array, numberOfElements, 'a', 5); // Example: addition with 5
     sortedArraysMerging(array, array, numberOfElements); // Merging two same arrays
     evenAndOddNumbersDistributing(array, numberOfElements);
     uniqueElemFinding(matrix, rows, columns);
-    diffBetweenDiag(matrix, rows, columns);
 
     // Clean up
     free(array);
@@ -273,6 +280,4 @@ int main() {
         free(matrix[i]);
     }
     free(matrix);
-
-    return 0;
 }
