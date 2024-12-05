@@ -1,10 +1,11 @@
 #include "lib.h"
 #include <math.h>
+#include <limits.h>
 
 // Function to calculate the difference between the diagonals
 int diffBetweenDiag(int rows, int column, int matrix[rows][column]) {
     if (rows != column) {
-        return -1; // Invalid matrix for diagonal difference
+        return INT_MIN; // For invalid matrix. It is a possibility, that diagonal difference will be INT_MIN, but such possibility is very low.
     }
 
     int mainDiagSum = 0;
@@ -57,15 +58,16 @@ int uniqueElemFinding(int rows, int column, int matrix[rows][column]) {
     return -1; // No unique elements
 }
 
-// Function to find the median of the matrix
+// Function to find the median of the matrix. Here it works by transforming matrix into array and then finding the median
 int findingTheMedian(int rows, int column, int matrix[rows][column]) {
     int matrixArray[rows * column];
 
+    //Here we transform matrix into array for further work
     for (int i = 0; i < rows * column; i++) {
         matrixArray[i] = matrix[i / column][i % column];
     }
 
-    // Sort the array
+    // Sort the array. I want to sort the array, because it will be much easier to find median.
     for (int i = 0; i < rows * column - 1; i++) {
         for (int j = i + 1; j < rows * column; j++) {
             if (matrixArray[i] > matrixArray[j]) {
@@ -76,7 +78,7 @@ int findingTheMedian(int rows, int column, int matrix[rows][column]) {
         }
     }
 
-    // Find the median
+    // Find the median. It amount of elements is even - we look for the middle index, if not - we take two elements in the middle and then finding the middle.
     if ((rows * column) % 2 == 1) {
         return matrixArray[(rows * column) / 2];
     } else {

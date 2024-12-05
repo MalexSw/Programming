@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "lib.h"
+#include <limits.h>
 
 void setUp() {}
 void tearDown() {}
@@ -12,7 +13,7 @@ void test_diffBetweenDiag() {
     TEST_ASSERT_EQUAL_INT(10, diffBetweenDiag(2, 2, matrix2));
 
     int matrix3[3][2] = {{1, 2}, {3, 4}, {5, 6}};
-    TEST_ASSERT_EQUAL_INT(-1, diffBetweenDiag(3, 2, matrix3));
+    TEST_ASSERT_EQUAL_INT(INT_MIN, diffBetweenDiag(3, 2, matrix3));
 }
 
 
