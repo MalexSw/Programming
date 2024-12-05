@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 // Constants to define maximum allowable products, customers, orders, and name length
 #define MAX_PRODUCTS 100
@@ -38,11 +39,12 @@ void init_store(store_t *store) {
 // Adds a new product to the store
 void addProduct(store_t *store, const char *name, float price, int amount) {
     if (store->productsAmount < MAX_PRODUCTS) {
-        product_t *product = &store->products[store->productsAmount++]; // Point to the next free slot
-        strncpy(product->name, name, MAX_NAME_LENGTH);  // Copy product name
-        product->price = price;  // Set product price
-        product->amount = amount;  // Set initial stock
-        printf("Product '%s' added \n", name);
+        product_t *product = &store->products[store->productsAmount++];
+        strncpy(product->name, name, MAX_NAME_LENGTH);
+        product->name[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null termination
+        product->price = price;
+        product->amount = amount;
+        printf("Product '%s' added\n", name);
     } else {
         printf("Store product list is full!\n");
     }
@@ -84,8 +86,9 @@ void placeOrder(store_t *store, const char *customerName, const char *productNam
     if (customerIndex == -1) {
         if (store->customerAmount < MAX_CUSTOMERS) {
             customer_t *customer = &store->customers[store->customerAmount++];
-            strncpy(customer->name, customerName, MAX_NAME_LENGTH);  // Copy customer name
-            customer->ordersAmount = 0;  // Initialize order count
+            strncpy(customer->name, customerName, MAX_NAME_LENGTH);
+            customer->name[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null termination
+            customer->ordersAmount = 0;
             customerIndex = store->customerAmount - 1;
         } else {
             printf("Customer list is full!\n");
@@ -96,7 +99,7 @@ void placeOrder(store_t *store, const char *customerName, const char *productNam
     // Add the order to the customer's order history
     customer_t *customer = &store->customers[customerIndex];
     if (customer->ordersAmount < MAX_ORDERS) {
-        customer->orders[customer->ordersAmount++] = productIndex; // Store product index
+        customer->orders[customer->ordersAmount++] = productIndex;
         store->products[productIndex].amount--;  // Reduce stock
         printf("Order placed: %s ordered '%s'.\n", customerName, productName);
     } else {
@@ -128,7 +131,7 @@ int main() {
 
     // Add products to the store
     addProduct(&store, "Computer", 871.20, 10);
-    addProduct(&store, "Printer", 250, 20);
+    addProduct(&store, "Printer", 250.00, 20);
     addProduct(&store, "Scanner", 123.40, 50);
 
     // Place some orders
@@ -138,9 +141,7 @@ int main() {
     placeOrder(&store, "Bob", "Scanner");
 
     // List orders for specific customers
-    listOrdersByCustomer(&store, "Angela");
+    listOrdersByCustomer(&store, "Angela");  // Non-existent customer
     listOrdersByCustomer(&store, "Bob");
     listOrdersByCustomer(&store, "Alice");
-
-    return 0;
-}
+    }
