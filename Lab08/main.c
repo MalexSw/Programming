@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 
 // Function to fill an array with random numbers within a given range
 void fillArrayWithRandomNumbers(int *array, int size, int minValue, int maxValue) {
@@ -13,7 +14,7 @@ void fillArrayWithRandomNumbers(int *array, int size, int minValue, int maxValue
 }
 
 // Function to calculate the average of negative numbers in an array
-void calcOfNegativeElementsAverage(int *array, int size) {
+float calcOfNegativeElementsAverage(int *array, int size) {
     printf("\n");
     int sumOfNegNumbers = 0;
     int amOfNegativeNum = 0;
@@ -34,22 +35,20 @@ void calcOfNegativeElementsAverage(int *array, int size) {
     // Calculate and print the average
     if (amOfNegativeNum != 0) {
         float averageValue = (float)sumOfNegNumbers / amOfNegativeNum;
-        printf("Average of negative elements in this array is %0.2f \n", averageValue);
+        return averageValue;
     } else {
-        printf("In this array, there are no negative values \n");
+       return 1; //average of negative elements cannot be >; 0;
     }
-    printf("\n---------------------------------- \n");
 }
 
 // Function to find the second greatest element in an array
-void secondGreatest(int *array, int size) {
+int secondGreatest(int *array, int size) {
     printf("\n");
-    int theGreatest = -1000; // Placeholder for the greatest value
-    int secondGreatest = -1000; // Placeholder for the second greatest value
+    int theGreatest = INT_MIN; // Placeholder for the greatest value
+    int secondGreatest = INT_MIN; // Placeholder for the second greatest value
 
     if (size < 2) {
-        printf("Array contains fewer than two elements.\n");
-        return;
+        return array[0];
     }
 
     // Find the greatest and second greatest elements
@@ -63,14 +62,11 @@ void secondGreatest(int *array, int size) {
     }
 
     // Print the array
-    for (int i = 0; i < size; i++) {
+       printf("\n Array elements:\n");
+    for(int i = 0; i < size; i++) {
         printf("%d ", array[i]);
-    }
-    printf("\n");
-
-    // Print the second greatest element
-    printf("Second greatest element is %d \n", secondGreatest);
-    printf("\n---------------------------------- \n");
+    }  
+    return secondGreatest;
 }
 
 // Function to modify an array based on a given operation
@@ -124,7 +120,7 @@ void sortedArraysMerging(int *array1, int *array2, int size) {
     printf("\n");
     int mergedArray[2 * size];
 
-    // Sort both arrays
+    // Sort array1 using bubble sort
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - i - 1; j++) {
             if (array1[j] > array1[j + 1]) {
@@ -132,6 +128,12 @@ void sortedArraysMerging(int *array1, int *array2, int size) {
                 array1[j] = array1[j + 1];
                 array1[j + 1] = temp;
             }
+        }
+    }
+
+    // Sort array2 using bubble sort
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
             if (array2[j] > array2[j + 1]) {
                 int temp = array2[j];
                 array2[j] = array2[j + 1];
@@ -150,8 +152,12 @@ void sortedArraysMerging(int *array1, int *array2, int size) {
         }
     }
 
-    while (i < size) mergedArray[k++] = array1[i++];
-    while (j < size) mergedArray[k++] = array2[j++];
+    while (i < size) {
+        mergedArray[k++] = array1[i++];
+    }
+    while (j < size) {
+        mergedArray[k++] = array2[j++];
+    }
 
     printf("\nMerged array:\n");
     for (int i = 0; i < 2 * size; i++) {
@@ -197,8 +203,16 @@ int main() {
     fillArrayWithRandomNumbers(array1, numberOfElements, minValue, maxValue);
     fillArrayWithRandomNumbers(array2, numberOfElements, minValue, maxValue);
 
-    calcOfNegativeElementsAverage(array1, numberOfElements);
-    secondGreatest(array1, numberOfElements);
+    float average = calcOfNegativeElementsAverage(array1, numberOfElements);
+    if (average == 1) {
+        printf("There is no negative elements in this array");
+    } else {
+        printf("Average of negative elements in this array is %0.2f \n", average);
+    }
+    printf("\n---------------------------------- \n");
+     int secondBiggest = secondGreatest(array1, numberOfElements);
+    printf("\n Second greatest element is %d \n", secondBiggest);
+    printf("\n---------------------------------- \n");
     arrayChanging(array1, numberOfElements, 'a', 3);
     sortedArraysMerging(array1, array2, numberOfElements);
     evenAndOddNumbersDistributing(array1, numberOfElements);

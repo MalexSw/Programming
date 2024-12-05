@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-void calcOfNegativeElementsAverage() {
-    int numberOfElements, minValue, maxValue;
+float calcOfNegativeElementsAverage() {
+    int numberOfElements;
+    int minValue;
+    int maxValue;
     
     printf("Enter the number of elements: ");
     scanf(" %d", &numberOfElements);
@@ -37,15 +39,16 @@ void calcOfNegativeElementsAverage() {
 
     if (amOfNegativeNum != 0) {
         float averageValue = (float)sumOfNegNumbers / amOfNegativeNum;
-        printf("Average of negative elements in this array is %0.2f \n", averageValue);
+        return averageValue;
     } else {
-       printf("In this array there are no negative values \n"); 
+       return 1; //average of negative elements cannot be >; 0;
     }
-    printf("---------------------------------- \n");
 }
 
-void secondGreatest() {
-    int numberOfElements, minValue, maxValue;
+int secondGreatest() {
+    int numberOfElements;
+    int minValue;
+    int maxValue;
     
     printf("Enter the number of elements: ");
     scanf(" %d", &numberOfElements);
@@ -65,8 +68,7 @@ void secondGreatest() {
     }
 
     if (numberOfElements < 2) { 
-        printf("Array contains only one element %d \n", array[0]);
-        return;
+        return array[0];
     } else {
         theGreatest = array[0];
 
@@ -78,18 +80,19 @@ void secondGreatest() {
                 secondGreatest = array[i];
             }
         }
-        printf("\n Second greatest element is %d \n", secondGreatest);
     }
 
     printf("\n Array elements:\n");
     for(int i = 0; i < numberOfElements; i++) {
         printf("%d ", array[i]);
     }  
-    printf("\n---------------------------------- \n");
+    return secondGreatest;
 }
 
 void arrayChanging() {
-    int numberOfElements, minValue, maxValue;
+    int numberOfElements;
+    int minValue;
+    int maxValue;
     
     printf(" Enter the number of elements: ");
     scanf(" %d", &numberOfElements);
@@ -159,7 +162,9 @@ void arrayChanging() {
 }
 
 void sortedArraysmerging() {
-    int numberOfElements, minValue, maxValue;
+    int numberOfElements;
+    int minValue;
+    int maxValue;
     
     printf("Enter the number of elements: ");
     scanf(" %d", &numberOfElements);
@@ -286,8 +291,16 @@ void evenAndOddNumbersDistributing() {
 
 
 int main() {
-    calcOfNegativeElementsAverage();
-    secondGreatest();
+    float average = calcOfNegativeElementsAverage();
+    if (average == 1) {
+        printf("There is no negative elements in this array");
+    } else {
+        printf("Average of negative elements in this array is %0.2f \n", average);
+    }
+    printf("\n---------------------------------- \n");
+    int secondBiggest = secondGreatest();
+    printf("\n Second greatest element is %d \n", secondBiggest);
+    printf("\n---------------------------------- \n");
     arrayChanging();
     sortedArraysmerging();
     evenAndOddNumbersDistributing();
