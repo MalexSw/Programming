@@ -1,202 +1,195 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef struct data_t {
-    int data; // Example data, replace with your struct from Lab 11
-} data_t;
+// Maximum allowable name length for products and customers
+#define MAX_NAME_LENGTH 50
 
-typedef struct node_t {
-    data_t data;
-    struct node_t *next;
-    struct node_t *prev;
-} node_t;
+// Struct to represent a product in the store (node data)
+typedef struct {
+    char name[MAX_NAME_LENGTH];  // Name
+    float price;                 // Price
+    int amount;                  // Available stock
+} product_t;
 
-typedef struct doubly_list_t {
-    node_t *head;
-    node_t *tail;
-} doubly_list_t;
+// Node structure for doubly linked list
+typedef struct product_node_t {
+    product_t data;                 // Product data
+    struct product_node_t *prev;    // Pointer to the previous node
+    struct product_node_t *next;    // Pointer to the next node
+} product_node_t;
+
+// Store structure containing a doubly linked list of products
+typedef struct {
+    product_node_t *head;  // Pointer to the first product
+    product_node_t *tail;  // Pointer to the last product
+} store_t;
 
 // Function prototypes
-void create_list(doubly_list_t **list);
-node_t *create_node(data_t data);
-void push_front(doubly_list_t *list, data_t data);
-void push_back(doubly_list_t *list, data_t data);
-void display_list(doubly_list_t *list);
-void display_list_reverse(doubly_list_t *list);
-void free_list(doubly_list_t **list);
-void insert_after(doubly_list_t *list, data_t target, data_t data);
-void insert_before(doubly_list_t *list, data_t target, data_t data);
-void erase(doubly_list_t *list, data_t target);
+void init_store(store_t *store);
+product_node_t *create_product_node(const char *name, float price, int amount);
+void add_product(store_t *store, const char *name, float price, int amount);
+void remove_product(store_t *store, const char *name);
+void place_order(store_t *store, const char *productName);
+void list_products(const store_t *store);
+void free_store(store_t *store);
 
-// Create an empty list
-void create_list(doubly_list_t **list) {
-    *list = (doubly_list_t *)malloc(sizeof(doubly_list_t));
-    (*list)->head = NULL;
-    (*list)->tail = NULL;
+// Main function
+int main() {
+    store_t store;
+    init_store(&store);  // Initialize the store
+
+    // Add products to the store
+    add_product(&store, "Computer", 871.20, 10);
+    add_product(&store, "Printer", 250.00, 20);
+    add_product(&store, "Scanner", 123.40, 50);
+
+    // List available products
+    printf("Available products:\n");
+    list_products(&store);
+
+    // Place an order
+    printf("\nPlacing an order for 'Computer':\n");
+    place_order(&store, "Computer");
+
+    // List available products after placing the order
+    printf("\nAvailable products after order:\n");
+    list_products(&store);
+
+    // Remove a product
+    printf("\nRemoving 'Printer' from the store:\n");
+    remove_product(&store, "Printer");
+
+    // List products after removal
+    printf("\nAvailable products after removal:\n");
+    list_products(&store);
+
+    // Free all allocated memory
+    free_store(&store);
+    return 0;
 }
 
-// Create a new node
-node_t *create_node(data_t data) {
-    node_t *node = (node_t *)malloc(sizeof(node_t));
-    node->data = data;
-    node->next = NULL;
+// Initialize the store
+void init_store(store_t *store) {
+    store->head = NULL;
+    store->tail = NULL;
+}
+
+// Create a new product node
+product_node_t *create_product_node(const char *name, float price, int amount) {
+    product_node_t *node = (product_node_t *)malloc(sizeof(product_node_t));
+    if (!node) {
+        perror("Failed to allocate memory for product node");
+        exit(EXIT_FAILURE);
+    }
+    strncpy(node->data.name, name, MAX_NAME_LENGTH);
+    node->data.name[MAX_NAME_LENGTH - 1] = '\0';  // Ensure null termination
+    node->data.price = price;
+    node->data.amount = amount;
     node->prev = NULL;
+    node->next = NULL;
     return node;
 }
 
-// Add a node at the front
-void push_front(doubly_list_t *list, data_t data) {
-    node_t *node = create_node(data);
-    if (list->head == NULL) { // List is empty
-        list->head = list->tail = node;
+// Add a new product to the store
+void add_product(store_t *store, const char *name, float price, int amount) {
+    product_node_t *new_node = create_product_node(name, price, amount);
+
+    // If the store is empty
+    if (store->head == NULL) {
+        store->head = store->tail = new_node;
     } else {
-        node->next = list->head;
-        list->head->prev = node;
-        list->head = node;
+        // Add the new node to the end of the list
+        store->tail->next = new_node;
+        new_node->prev = store->tail;
+        store->tail = new_node;
     }
+    printf("Product '%s' added to the store.\n", name);
 }
 
-// Add a node at the back
-void push_back(doubly_list_t *list, data_t data) {
-    node_t *node = create_node(data);
-    if (list->tail == NULL) { // List is empty
-        list->head = list->tail = node;
+// Remove a product from the store
+void remove_product(store_t *store, const char *name) {
+    product_node_t *current = store->head;
+
+    // Traverse the list to find the product
+    while (current != NULL && strcmp(current->data.name, name) != 0) {
+        current = current->next;
+    }
+
+    // If the product was not found
+    if (current == NULL) {
+        printf("Product '%s' not found in the store.\n", name);
+        return;
+    }
+
+    // Remove the node
+    if (current->prev) {
+        current->prev->next = current->next;
     } else {
-        node->prev = list->tail;
-        list->tail->next = node;
-        list->tail = node;
+        store->head = current->next;  // Removing the head
     }
+    if (current->next) {
+        current->next->prev = current->prev;
+    } else {
+        store->tail = current->prev;  // Removing the tail
+    }
+
+    free(current);
+    printf("Product '%s' removed from the store.\n", name);
 }
 
-// Display the list
-void display_list(doubly_list_t *list) {
-    node_t *current = list->head;
-    while (current != NULL) {
-        printf("%d <-> ", current->data.data);
+// Place an order for a product
+void place_order(store_t *store, const char *productName) {
+    product_node_t *current = store->head;
+
+    // Traverse the list to find the product
+    while (current != NULL && strcmp(current->data.name, productName) != 0) {
         current = current->next;
     }
-    printf("NULL\n");
-}
 
-// Display the list in reverse order
-void display_list_reverse(doubly_list_t *list) {
-    node_t *current = list->tail;
-    while (current != NULL) {
-        printf("%d <-> ", current->data.data);
-        current = current->prev;
+    if (current == NULL) {
+        printf("Product '%s' not found in the store.\n", productName);
+        return;
     }
-    printf("NULL\n");
-}
 
-// Free the list
-void free_list(doubly_list_t **list) {
-    node_t *current = (*list)->head;
-    while (current != NULL) {
-        node_t *for_deletion = current;
-        current = current->next;
-        free(for_deletion);
+    // Check if the product is in stock
+    if (current->data.amount <= 0) {
+        printf("Product '%s' is out of stock.\n", productName);
+        return;
     }
-    free(*list);
-    *list = NULL;
+
+    // Reduce the stock and confirm the order
+    current->data.amount--;
+    printf("Order placed for product '%s'. Remaining stock: %d\n", productName, current->data.amount);
 }
 
-// Insert a node after a target node
-void insert_after(doubly_list_t *list, data_t target, data_t data) {
-    node_t *current = list->head;
+// List all products in the store
+void list_products(const store_t *store) {
+    product_node_t *current = store->head;
+
+    if (current == NULL) {
+        printf("The store is empty.\n");
+        return;
+    }
+
     while (current != NULL) {
-        if (current->data.data == target.data) {
-            node_t *node = create_node(data);
-            node->next = current->next;
-            node->prev = current;
-            if (current->next != NULL) {
-                current->next->prev = node;
-            } else {
-                list->tail = node; // Update tail if at the end
-            }
-            current->next = node;
-            return;
-        }
+        printf("Product: %s | Price: $%.2f | Stock: %d\n",
+               current->data.name, current->data.price, current->data.amount);
         current = current->next;
     }
 }
 
-// Insert a node before a target node
-void insert_before(doubly_list_t *list, data_t target, data_t data) {
-    node_t *current = list->head;
+// Free all memory used by the store
+void free_store(store_t *store) {
+    product_node_t *current = store->head;
+
     while (current != NULL) {
-        if (current->data.data == target.data) {
-            node_t *node = create_node(data);
-            node->next = current;
-            node->prev = current->prev;
-            if (current->prev != NULL) {
-                current->prev->next = node;
-            } else {
-                list->head = node; // Update head if at the beginning
-            }
-            current->prev = node;
-            return;
-        }
+        product_node_t *to_free = current;
         current = current->next;
+        free(to_free);
     }
-}
 
-// Erase a target node
-void erase(doubly_list_t *list, data_t target) {
-    node_t *current = list->head;
-    while (current != NULL) {
-        if (current->data.data == target.data) {
-            if (current->prev != NULL) {
-                current->prev->next = current->next;
-            } else {
-                list->head = current->next; // Update head if at the beginning
-            }
-            if (current->next != NULL) {
-                current->next->prev = current->prev;
-            } else {
-                list->tail = current->prev; // Update tail if at the end
-            }
-            free(current);
-            return;
-        }
-        current = current->next;
-    }
-}
-
-// Main function to test the doubly linked list
-int main() {
-    doubly_list_t *list;
-    create_list(&list);
-
-    // Add nodes
-    data_t data = {.data = 10};
-    push_front(list, data);
-    data.data = 20;
-    push_front(list, data);
-    data.data = 30;
-    push_back(list, data);
-
-    // Display list
-    display_list(list);
-
-    // Display list in reverse
-    display_list_reverse(list);
-
-    // Insert before and after
-    data_t target = {.data = 20};
-    data.data = 15;
-    insert_before(list, target, data);
-    data.data = 25;
-    insert_after(list, target, data);
-
-    // Display updated list
-    display_list(list);
-
-    // Erase a node
-    erase(list, target);
-
-    // Display list after deletion
-    display_list(list);
-
-    // Free the list
-    free_list(&list);
+    store->head = NULL;
+    store->tail = NULL;
+    printf("Store memory freed.\n");
 }

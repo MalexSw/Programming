@@ -1,200 +1,139 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
-// Define the data structure (can replace with your own struct from Lab #11)
-typedef struct data_t {
-    int data;
-} data_t;
+#define MAX_NAME_LENGTH 50
 
-// Define the node structure for the singly linked list
+// Struct to represent a product in the store
+typedef struct product_t {
+    char name[MAX_NAME_LENGTH];  // Name
+    float price;                 // Price
+    int amount;                  // Available stock
+} product_t;
+
+// Node structure for singly linked list
 typedef struct node_t {
-    data_t data;             // Data contained in the node
-    struct node_t *next;     // Pointer to the next node
+    product_t product;          
+    struct node_t *next;        // Pointer to the next node
 } node_t;
 
-// Define the singly linked list structure with a head node
-typedef struct forward_list_t {
-    node_t *head;            // Head of the list
-} forward_list_t;
+// Store structure with linked list for products
+typedef struct {
+    node_t *head;               // Head of the product linked list
+} store_t;
 
 // Function prototypes
-void push_front(forward_list_t *list, data_t data);
-void pop_front(forward_list_t *list);
-void display_node(node_t *node);
-void display_list(forward_list_t *list);
-void free_list(forward_list_t **list);
-void create_list(forward_list_t **list);
-node_t *create_node(data_t data);
-node_t *find(forward_list_t *list, data_t data);
-node_t *find_prev_node(forward_list_t *list, data_t data);
-void insert_after(forward_list_t *list, data_t target, data_t data);
-void insert_before(forward_list_t *list, data_t target, data_t data);
-void erase_after(forward_list_t *list, data_t target);
-bool is_empty(forward_list_t *list);
-bool is_equal(data_t first, data_t second);
+void init_store(store_t *store);
+node_t *create_node(const char *name, float price, int amount);
+void add_product(store_t *store, const char *name, float price, int amount);
+void display_products(store_t *store);
+node_t *find_product(store_t *store, const char *name);
+void place_order(store_t *store, const char *name);
+void free_store(store_t *store);
 
 // Main function
-int main(int argc, char const *argv[]) {
-    forward_list_t *list = NULL;
-    create_list(&list); // Initialize the list
+int main() {
+    store_t store;
+    init_store(&store);
 
-    // Add elements
-    data_t data = {.data = 10};
-    push_front(list, data);
-    data.data = 20;
-    push_front(list, data);
-    data.data = 30;
-    push_front(list, data);
+    // Add products to the store
+    add_product(&store, "Computer", 871.20, 10);
+    add_product(&store, "Printer", 250.00, 20);
+    add_product(&store, "Scanner", 123.40, 50);
 
-    data_t target = {.data = 10};
-    data.data = 50;
-    insert_after(list, target, data);
+    // Display all products
+    printf("Products in the store:\n");
+    display_products(&store);
 
-    // Display elements
-    printf("Initial List:\n");
-    display_list(list);
+    // Place orders
+    place_order(&store, "Computer");
+    place_order(&store, "Printer");
+    place_order(&store, "Nonexistent");  // Invalid order
 
-    // Find a node and display it
-    node_t *found = find(list, target);
-    printf("\nFound node with data = %d:\n", target.data);
-    display_node(found);
+    // Display products after orders
+    printf("\nProducts after orders:\n");
+    display_products(&store);
 
-    // Insert before a specific element
-    data.data = 75;
-    insert_before(list, target, data);
-    printf("\nList after inserting 75 before 10:\n");
-    display_list(list);
-
-    // Free list memory
-    free_list(&list);
+    // Free all allocated memory
+    free_store(&store);
     return 0;
 }
 
-// Function implementations
 
-// Create a new node
-node_t *create_node(data_t data) {
+// Initialize the store
+void init_store(store_t *store) {
+    store->head = NULL; 
+}
+
+// Create a new node for the product
+node_t *create_node(const char *name, float price, int amount) {
     node_t *node = (node_t *)malloc(sizeof(node_t));
     if (!node) {
-        perror("Failed to create node");
+        perror("Failed to create product node");
         exit(EXIT_FAILURE);
     }
-    node->data = data;
+    strncpy(node->product.name, name, MAX_NAME_LENGTH);
+    node->product.name[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null termination
+    node->product.price = price;
+    node->product.amount = amount;
     node->next = NULL;
     return node;
 }
 
-// Initialize the list
-void create_list(forward_list_t **list) {
-    *list = (forward_list_t *)malloc(sizeof(forward_list_t));
-    if (!(*list)) {
-        perror("Failed to create list");
-        exit(EXIT_FAILURE);
+// Add a product to the store (insert at the front)
+void add_product(store_t *store, const char *name, float price, int amount) {
+    node_t *node = create_node(name, price, amount);
+    node->next = store->head;
+    store->head = node;
+    printf("Product '%s' added to the store.\n", name);
+}
+
+// Display all products in the store
+void display_products(store_t *store) {
+    node_t *current = store->head;
+    while (current != NULL) {
+        printf("Product: %s, Price: $%.2f, Stock: %d\n",
+               current->product.name, current->product.price, current->product.amount);
+        current = current->next;
     }
-    (*list)->head = NULL; // Initially empty
 }
 
-// Add an element to the front of the list
-void push_front(forward_list_t *list, data_t data) {
-    node_t *node = create_node(data);
-    node->next = list->head; // Point to the current head
-    list->head = node;       // Update head to the new node
-}
-
-// Remove the front element of the list
-void pop_front(forward_list_t *list) {
-    if (list->head == NULL) {
-        return; // List is empty
+// Find a product in the store by name
+node_t *find_product(store_t *store, const char *name) {
+    node_t *current = store->head;
+    while (current != NULL) {
+        if (strcmp(current->product.name, name) == 0) {
+            return current;
+        }
+        current = current->next;
     }
-    node_t *for_deletion = list->head;
-    list->head = list->head->next; // Update head
-    free(for_deletion);
+    return NULL;
 }
 
-// Display a specific node
-void display_node(node_t *node) {
-    if (node) {
-        printf("Node at %p: %d\n", (void *)node, node->data.data);
+// Place an order for a product
+void place_order(store_t *store, const char *name) {
+    node_t *product_node = find_product(store, name);
+    if (!product_node) {
+        printf("Product '%s' not found in the store!\n", name);
+        return;
+    }
+    if (product_node->product.amount > 0) {
+        product_node->product.amount--;
+        printf("Order placed for product '%s'. Remaining stock: %d\n",
+               name, product_node->product.amount);
     } else {
-        printf("NULL\n");
+        printf("Product '%s' is out of stock!\n", name);
     }
 }
 
-// Display the entire list
-void display_list(forward_list_t *list) {
-    node_t *current = list->head;
+// Free all memory used by the store
+void free_store(store_t *store) {
+    node_t *current = store->head;
     while (current != NULL) {
-        printf("%d -> ", current->data.data);
+        node_t *temp = current;
         current = current->next;
+        free(temp);
     }
-    printf("NULL\n");
-}
-
-// Free all memory used by the list
-void free_list(forward_list_t **list) {
-    node_t *current = (*list)->head;
-    while (current != NULL) {
-        node_t *for_deletion = current;
-        current = current->next;
-        free(for_deletion);
-    }
-    free(*list);
-    *list = NULL;
-}
-
-// Find a specific node in the list
-node_t *find(forward_list_t *list, data_t data) {
-    node_t *current = list->head;
-    while (current != NULL) {
-        if (current->data.data == data.data) {
-            return current;
-        }
-        current = current->next;
-    }
-    return NULL;
-}
-
-// Find the previous node of a specific node
-node_t *find_prev_node(forward_list_t *list, data_t data) {
-    node_t *current = list->head;
-    while (current != NULL && current->next != NULL) {
-        if (current->next->data.data == data.data) {
-            return current;
-        }
-        current = current->next;
-    }
-    return NULL;
-}
-
-// Insert a node after a specific node
-void insert_after(forward_list_t *list, data_t target, data_t data) {
-    node_t *current = find(list, target);
-    if (current) {
-        node_t *node = create_node(data);
-        node->next = current->next;
-        current->next = node;
-    }
-}
-
-// Insert a node before a specific node
-void insert_before(forward_list_t *list, data_t target, data_t data) {
-    node_t *prev = find_prev_node(list, target);
-    if (prev) {
-        node_t *node = create_node(data);
-        node->next = prev->next;
-        prev->next = node;
-    } else if (list->head && list->head->data.data == target.data) {
-        push_front(list, data); // Insert at the head
-    }
-}
-
-// Check if the list is empty
-bool is_empty(forward_list_t *list) {
-    return list->head == NULL;
-}
-
-// Check if two data elements are equal
-bool is_equal(data_t first, data_t second) {
-    return first.data == second.data;
+    store->head = NULL;
 }
