@@ -1,65 +1,8 @@
+// Source file: store.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-
-#define MAX_NAME_LENGTH 50
-
-// Struct to represent a product in the store
-typedef struct product_t {
-    char name[MAX_NAME_LENGTH];  // Name
-    float price;                 // Price
-    int amount;                  // Available stock
-} product_t;
-
-// Node structure for singly linked list
-typedef struct node_t {
-    product_t product;          
-    struct node_t *next;        // Pointer to the next node
-} node_t;
-
-// Store structure with linked list for products
-typedef struct {
-    node_t *head;               // Head of the product linked list
-} store_t;
-
-// Function prototypes
-void init_store(store_t *store);
-node_t *create_node(const char *name, float price, int amount);
-void add_product(store_t *store, const char *name, float price, int amount);
-void display_products(store_t *store);
-node_t *find_product(store_t *store, const char *name);
-void place_order(store_t *store, const char *name);
-void free_store(store_t *store);
-
-// Main function
-int main() {
-    store_t store;
-    init_store(&store);
-
-    // Add products to the store
-    add_product(&store, "Computer", 871.20, 10);
-    add_product(&store, "Printer", 250.00, 20);
-    add_product(&store, "Scanner", 123.40, 50);
-
-    // Display all products
-    printf("Products in the store:\n");
-    display_products(&store);
-
-    // Place orders
-    place_order(&store, "Computer");
-    place_order(&store, "Printer");
-    place_order(&store, "Nonexistent");  // Invalid order
-
-    // Display products after orders
-    printf("\nProducts after orders:\n");
-    display_products(&store);
-
-    // Free all allocated memory
-    free_store(&store);
-    return 0;
-}
-
+#include "store.h"
 
 // Initialize the store
 void init_store(store_t *store) {
