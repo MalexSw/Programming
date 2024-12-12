@@ -1,3 +1,0 @@
-Scanner 123.40 50
-Printer 250.00 20
-Computer 871.20 10
